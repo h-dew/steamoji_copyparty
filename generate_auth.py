@@ -45,7 +45,7 @@ def generateVolume(names):
     volumes = []
     for name in names:
         volume = "[/" + name + "]\n  "
-        volume += "./apprentice_folders/" + name + "\n  "
+        volume += "../" + APPRENTICE_FOLDER_NAME + "/" + name + "\n  "
         volume += "accs:\n    rw: " + nameToUser(name) + "\n\n"
         volumes.append(volume)
 
