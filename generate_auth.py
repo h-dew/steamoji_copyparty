@@ -2,15 +2,20 @@ from glob import glob
 import os
 import errno
 
+from colorama import init as colorama_init
+from colorama import Fore
+from colorama import Style
+
 APPRENTICE_FOLDER_NAME = "apprentices"
+
+colorama_init(autoreset=True)
 
 # HELPERS
 
 # format apprentice list for output
 def printApprentices(apprentices):
-    print("Apprentices:")
     for apprentice in apprentices:
-        print("\t" + apprentice)
+        print("\t" + Fore.YELLOW + apprentice)
 
 # do a unix-style glob to generate list of folders matching path
 def getFolderList(path):
@@ -50,23 +55,26 @@ def generateVolume(names):
         volumes.append(volume)
 
     return "".join(volumes)
-    
+
+# generate the entire conf file. probably what you wanna use
+def generateConfFile():
+    # all directories in sibling folder APPRENTICE_FOLDER_NAME
+    apprentice_regex = "../" + APPRENTICE_FOLDER_NAME + "/*/"
+    apprentices = getFolderList(apprentice_regex)
+
+    # check to see that we found at least 1 apprentice
+    if len(apprentices) < 1:
+        print(Fore.RED + "Could not find apprentice folders!" + Fore.RESET_ALL)
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), apprentice_regex)
+
+    print(Fore.GREEN + "Found apprentice(s), generating users.conf")
+
+    # generate account and volume listings, write to file
+    with open("./users.conf", "w", encoding="utf-8") as file:
+        file.write(generateAccounts(apprentices))
+        file.write("\n\n")
+        file.write(generateVolume(apprentices))
+
+    print(Fore.GREEN + "Wrote to users.conf sucessfully")
 
 
-
-# CODE
-
-# all directories in sibling folder APPRENTICE_FOLDER_NAME
-apprentice_regex = "../" + APPRENTICE_FOLDER_NAME + "/*/"
-apprentices = getFolderList(apprentice_regex)
-
-# Check to see that we found at least 1 apprentice
-if len(apprentices) < 1:
-    print("Could not find apprentice folders!")
-    raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), apprentice_regex)
-
-# generate account and volume listings, write to file
-with open("./users.conf", "w", encoding="utf-8") as file:
-    file.write(generateAccounts(apprentices))
-    file.write("\n\n")
-    file.write(generateVolume(apprentices))
