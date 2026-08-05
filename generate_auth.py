@@ -66,7 +66,7 @@ if len(apprentices) < 1:
     raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), apprentice_regex)
 
 # generate account and volume listings, write to file
-with open("./conf/users.conf", "w", encoding="utf-8") as file:
+with open("./users.conf", "w", encoding="utf-8") as file:
     file.write(generateAccounts(apprentices))
     file.write("\n\n")
     file.write(generateVolume(apprentices))
