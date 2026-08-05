@@ -6,11 +6,13 @@ APPRENTICE_FOLDER_NAME = "apprentices"
 
 # HELPERS
 
+# format apprentice list for output
 def printApprentices(apprentices):
     print("Apprentices:")
     for apprentice in apprentices:
         print("\t" + apprentice)
 
+# do a unix-style glob to generate list of folders matching path
 def getFolderList(path):
     apprentices = []
 
@@ -22,20 +24,23 @@ def getFolderList(path):
 
     return apprentices
 
+# format folder name to copyparty login
 def nameToAccount(name):
     fname = nameToUser(name)
     return fname + ": " + fname
 
+# join first and last names from folder, make lowercase
 def nameToUser(name):
     return "".join(name.lower().split(" "))
 
-
+# given list of names, generates account list
 def generateAccounts(names):
     accounts = "[accounts]\n"
     for name in names:
         accounts += "  " + nameToAccount(name) + "\n"
     return accounts
 
+# given list of names, generates volume listing
 def generateVolume(names):
     volumes = []
     for name in names:
@@ -47,7 +52,11 @@ def generateVolume(names):
     return "".join(volumes)
     
 
+
+
 # CODE
+
+# all directories in sibling folder APPRENTICE_FOLDER_NAME
 apprentice_regex = "../" + APPRENTICE_FOLDER_NAME + "/*/"
 apprentices = getFolderList(apprentice_regex)
 
@@ -56,7 +65,7 @@ if len(apprentices) < 1:
     print("Could not find apprentice folders!")
     raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), apprentice_regex)
 
-
+# generate account and volume listings, write to file
 with open("./conf/users.conf", "w", encoding="utf-8") as file:
     file.write(generateAccounts(apprentices))
     file.write("\n\n")
