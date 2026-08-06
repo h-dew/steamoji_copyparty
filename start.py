@@ -24,7 +24,6 @@ if not glob("copyparty-sfx.py"):
 if not glob("../" + generate_auth.APPRENTICE_FOLDER_NAME):
     print(Fore.RED + "Could not find apprentice container folder! Check this script and manually change APPRENTICE_FOLDER_NAME above if needed")
 
-
 # generate auth
 print(Fore.YELLOW + "Generating users from apprentice folder: " + Fore.MAGENTA + generate_auth.APPRENTICE_FOLDER_NAME)
 generate_auth.generateConfFile()
