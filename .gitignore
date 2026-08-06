@@ -1,2 +1,3 @@
 # user configuration is generated, so ignore
 users.conf
+__pycache__
