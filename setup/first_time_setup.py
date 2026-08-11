@@ -23,13 +23,9 @@ USER_PLACEHOLDER = "{usr}"
 
 time.sleep(5)
 
-# Get user's home directory
+# Get user's home dir and create path to installation destination
 dest_dir = os.path.join(os.path.expanduser("~"), "steamojicopyparty")
-
 src_dir = os.path.dirname(script_dir)
-
-
-
 
 
 
