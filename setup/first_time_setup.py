@@ -50,8 +50,8 @@ if glob(dest_dir):
                 time.sleep(3)
                 sys.exit()
 
-# copy new files
-shutil.cptree(dest_dir, )
+# copy the repo to home folder
+shutil.cptree(src_dir, dest_dir)
 
 
 # generate unit file
@@ -69,18 +69,21 @@ shutil.cptree(dest_dir, )
 # Maybe read template as string, replace format specifiers in string, then write file to usr/lib/systemd/system
 
 
-try:
-    with open("steamoji_copyparty.service", "r") as file:
+with open("steamoji_copyparty.service", "r") as file:
         text = file.read()
         text = text.replace(u, user)
-except IOError as e:
+
+
+try:
+    with open("/usr/lib/systemd/system/steamojicopyparty.service", "w") as file:
+    file.write(text)
+    except IOError as e:
     if e[0] == errno.EPERM:
        sys.exit(Fore.YELLOW + "Run this script as sudo you dingus!")
 
 
 
-with open("/usr/lib/systemd/system/steamojicopyparty.service", "w") as file:
-    file.write(text)
+
 
 if not glob("/usr/lib/systemd/system/steamojicopyparty.service"):
     print("Couldn't register service, please move file manually!")
