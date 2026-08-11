@@ -13,7 +13,13 @@ from glob import glob
 script_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(script_dir)
 
-print("script dir:" + script_dir + "\n")
+## double check the os!! idk why but this may be needed
+if not sys.platform.startswith('linux'):
+    print("This script only runs on Linux!\nThe fileserver can be run in Windows, but the start.py file must be opened manually.")
+    print("Automatically exiting in 5 seconds")
+    time.sleep(5)
+    sys.exit()
+
 
 
 # get username (NEEDS VALIDATION ON DEBIAN)
@@ -21,7 +27,6 @@ print("script dir:" + script_dir + "\n")
 user = os.getenv('SUDO_USER')
 USER_PLACEHOLDER = "{usr}"
 
-time.sleep(5)
 
 # Get user's home dir and create path to installation destination
 dest_dir = os.path.join(os.path.expanduser("~"), "steamojicopyparty")
@@ -34,56 +39,52 @@ src_dir = os.path.dirname(script_dir)
 # if old files exist. delete them.
 
 if glob(dest_dir):
-    print("Already found an installation at:" + copyparty_dir)
+    print("Already found an installation at:" + dest_dir)
     print("Delete old installation and replace? Apprentice folder will not be modified. Press Y to continue")
-    while true:
+    while True:
         userConfirmation = input()
 
         if len(userConfirmation) > 0:
             if userConfirmation.lower() == "y":
                 print("Deleting old installation...")
                 shutil.rmtree(dest_dir)
- 
+
+                # copy the repo to home folder
+                shutil.copytree(src_dir, dest_dir)
+
                 break
+ 
             else:
-                print("Cannot continue, exiting...")
-                time.sleep(3)
-                sys.exit()
+                print("Leaving old installation...")
+                time.sleep(2)
 
-# copy the repo to home folder
-shutil.cptree(src_dir, dest_dir)
-
-
-# generate unit file
-
-# place unit file
-
-# register as systemd service
+                break
 
 
 
+# now that application is in place, generate unit file
+unit_template_path_rel = "steamojicopyparty_TEMPLATE.service"
+unit_path_rel = "steamojicopyparty.service"
 
-# EDIT SERVICE FILE FOR USER
-# Maybe have the service file below be a template?
-# Replace specific expression with user from above. idk should be doable.
-# Maybe read template as string, replace format specifiers in string, then write file to usr/lib/systemd/system
-
-
-with open("steamoji_copyparty.service", "r") as file:
-        text = file.read()
-        text = text.replace(u, user)
+unit_dest_path = os.path.join("/etc/systemd/system/", unit_path_rel)
 
 
-try:
-    with open("/usr/lib/systemd/system/steamojicopyparty.service", "w") as file:
+# Open template, replace {usr} placeholder
+with open(unit_template_path_rel, "r") as file:
+    text = file.read()
+    text = text.replace(USER_PLACEHOLDER, user)
+
+
+
+# Write generated file to current dir
+with open(unit_path_rel, "w") as file:
     file.write(text)
-    except IOError as e:
-    if e[0] == errno.EPERM:
-       sys.exit(Fore.YELLOW + "Run this script as sudo you dingus!")
 
 
+# Copy to /etc/systemd/system - this is where admin-created systemd unit files live
+shutil.copy(unit_path_rel, unit_dest_path)
 
 
-
-if not glob("/usr/lib/systemd/system/steamojicopyparty.service"):
-    print("Couldn't register service, please move file manually!")
+# double check the service file is there before registering 
+if not glob(unit_dest_path):
+    print("Service not found in folder! Try copying \"steamojicopyparty.service\" to to \"/etc/systemd/system\" manually!")

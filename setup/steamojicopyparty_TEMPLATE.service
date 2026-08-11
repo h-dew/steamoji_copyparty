@@ -1,21 +1,20 @@
 # /etc/systemd/system/steamoji_copyparty.service
 
-
 # USER TIMER FOR REBOOT
 # REDIRECT OUTPUT TO LOG FILE
 
 [Unit]
-# A description used to identify what this service does.
+
 Description=Runs and monitors copyparty fileserver.
 
-# Ensures that the service doesn't start until after networking has started.
+# Ensures the service opens after networking is available
 After=network.target
 
 [Service]
-# The working directory.
-# This should be set to wherever you want to run the task.
-# This is typically the directory where the executable lives.
-WorkingDirectory=/home/{usr}/steamoji_copyparty
+Type=forking
+PIDFile=
+
+WorkingDirectory=/home/{usr}/steamojicopyparty
 
 # The user and group you want to run this command as.
 # Typically, I run commands as my own user (ubuntu) to simplify permissions.
