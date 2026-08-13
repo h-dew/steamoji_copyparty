@@ -10,29 +10,18 @@ Description=Runs and monitors copyparty fileserver.
 After=multi-user.target
 
 [Service]
-Type=forking
-GuessMainPID=yes
-PIDFile=
+Type=exec
+ExecStart=/usr/bin/python3 /home/{usr}/steamojicopyparty/start.py
 ExitType=main
 
 WorkingDirectory=/home/{usr}/steamojicopyparty
 
-# The user and group you want to run this command as.
-# Typically, I run commands as my own user (ubuntu) to simplify permissions.
 User={usr}
 Group={usr}
 
-# This line ensures the program restarts on its own in case the process crashes.
+# Ensures the program 
 Restart=always
-
-# The actual command to execute on boot.
-# We create a screen instance called mc.
-# This will alow us to attach to the screen instance if necessary.
-# After that is the command itself.
-# In this case, we run a bash script in the working directory.
-ExecStart=/{usr}/bin/screen -DmS mc bash minecraft.sh
 
 [Install]
 # The run level.
-# Ensures the process starts at the right part of the boot process.
 WantedBy=multi-user.target
