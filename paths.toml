@@ -1,0 +1,18 @@
+# This configuration file holds the drive names and the folder names
+
+[drives]
+# 2 drives are expected, one for storage and one for backup
+# Ensure that the drives are named correctly, and are mounted on startup
+
+storage = "storage"
+backup = "backup"
+
+[folders]
+# These three folders are to be placed at the root of the storage drive
+
+apprenticeFolder = "apprentice_folders"
+projectFilesFolder = "project_files"
+miscFolder = "misc"
+
+# No setup needed for the backup drive
+

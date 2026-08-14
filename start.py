@@ -1,7 +1,13 @@
 # handles auth generation and starts copyparty pointing to main.conf
 import generate_auth
+import tomllib
+import os
+import sys
 
 from glob import glob
+
+# get drive and folder names
+apprenticeFolderName = "apprentice_folders"
 
 # check for required files
 if not glob("main.conf"):
@@ -15,11 +21,11 @@ if not glob("copyparty-sfx.py"):
 # note that apprentice folder must be sibling to steamoji_copyparty
 
 # check if apprentice parent folder exists
-if not glob("../" + generate_auth.APPRENTICE_FOLDER_NAME):
-    print("Could not find apprentice container folder! Check this script and manually change APPRENTICE_FOLDER_NAME above if needed")
+#if not glob("../" + generate_auth.APPRENTICE_FOLDER_NAME):
+#    print("Could not find apprentice container folder! Check this script and manually change APPRENTICE_FOLDER_NAME above if needed")
 
 # generate auth
-print("Generating users from apprentice folder: " + generate_auth.APPRENTICE_FOLDER_NAME)
+print("Generating users from apprentice folder: " + apprenticeFolderName)
 generate_auth.generateConfFile()
 
 # double check that we have the users file
@@ -27,16 +33,10 @@ if not glob("users.conf"):
     print("Could not find users.conf... should've been generated earlier. Check apprentice folder layout or" + " generate_auth.py")
 
 
-
-# TIME TO FORK BABY !!!
-pid = os.fork()
-
 # FINISH LATER
-path_to_python_binary = sys.executable
+target_script = "copyparty-sfx.py"
 
-args = ["python3", "/PATH"] # CHECK IF PATH IS RELATIVE
+args = [sys.executable, target_script, "-c", "main.conf"]
 
-env = os.environ
-
-os.execve(path_to_python_binary, args, env)
+os.execv(sys.executable, args)
 

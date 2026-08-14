@@ -1,10 +1,11 @@
 from glob import glob
 import os
 import errno
+import tomllib
+import os
 
-APPRENTICE_FOLDER_NAME = "apprentices"
 
-# HELPERS
+    # Import this into another script and call generateConfFile to generate conf file. Drive and folder names are determined from paths.toml
 
 # format apprentice list for output
 def printApprentices(apprentices):
@@ -32,6 +33,13 @@ def nameToAccount(name):
 def nameToUser(name):
     return "".join(name.lower().split(" "))
 
+# given list of users, puts them in a group together
+def generateGroup(names):
+    group = "[groups] \n\tapprentices: "
+    usernames = [nameToUser(name) for name in names]
+    group = group + ", ".join(usernames)
+    return group
+
 # given list of names, generates account list
 def generateAccounts(names):
     accounts = "[accounts]\n"
@@ -40,11 +48,11 @@ def generateAccounts(names):
     return accounts
 
 # given list of names, generates volume listing
-def generateVolume(names):
+def generateVolume(names, path):
     volumes = []
     for name in names:
         volume = "[/" + name + "]\n  "
-        volume += "../" + APPRENTICE_FOLDER_NAME + "/" + name + "\n  "
+        volume += path + name + "\n  "
         volume += "accs:\n    rw: " + nameToUser(name) + "\n\n"
         volumes.append(volume)
 
@@ -52,8 +60,18 @@ def generateVolume(names):
 
 # generate the entire conf file. probably what you wanna use
 def generateConfFile():
+    # Get path names from paths.toml
+    with open("./paths.toml", "rb") as file:
+        paths = tomllib.load(file)
+
+    # get drive and folder names from paths.toml
+    apprenticeFolderName = paths["folders"]["apprenticeFolder"]
+    storageDriveName = paths["drives"]["storage"]
+
+    apprenticeFolderPath = "/mnt/" + storageDriveName + "/" + apprenticeFolderName + "/"
+
     # all directories in sibling folder APPRENTICE_FOLDER_NAME
-    apprentice_regex = "../" + APPRENTICE_FOLDER_NAME + "/*/"
+    apprentice_regex = apprenticeFolderPath + "*/"
     apprentices = getFolderList(apprentice_regex)
 
     # check to see that we found at least 1 apprentice
@@ -67,7 +85,9 @@ def generateConfFile():
     with open("./users.conf", "w", encoding="utf-8") as file:
         file.write(generateAccounts(apprentices))
         file.write("\n\n")
-        file.write(generateVolume(apprentices))
+        file.write(generateGroup(apprentices))
+        file.write("\n\n")
+        file.write(generateVolume(apprentices, apprenticeFolderPath))
 
     print("Wrote to users.conf sucessfully")
 
