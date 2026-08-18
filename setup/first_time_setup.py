@@ -66,12 +66,15 @@ if glob(dest_dir):
 unit_template_path_rel = "steamojicopyparty_TEMPLATE.service"
 unit_path_rel = "steamojicopyparty.service"
 
+restart_unit = "copypartyrestart.service"
+restart_timer = "copypartyrestart.timer"
+
 unit_dest_path = os.path.join("/etc/systemd/system/", unit_path_rel)
 
 
 # Open template, replace {usr} placeholder
 with open(unit_template_path_rel, "r") as file:
-    text = file.read()
+    text = file.read() 
     text = text.replace(USER_PLACEHOLDER, user)
 
 
@@ -88,3 +91,8 @@ shutil.copy(unit_path_rel, unit_dest_path)
 # double check the service file is there before registering 
 if not glob(unit_dest_path):
     print("Service not found in folder! Try copying \"steamojicopyparty.service\" to to \"/etc/systemd/system\" manually!")
+
+
+
+# REGISTER UNITS
+# Only timer needs to be registered for the restart unit

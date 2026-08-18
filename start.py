@@ -11,10 +11,15 @@ apprenticeFolderName = "apprentice_folders"
 
 # check for required files
 if not glob("main.conf"):
-    print("Missing main.conf! Please redownload from https://github.com/h-dew/steamoji_copyparty!")
+    print("Missing main.conf! Please redownload from: https://github.com/h-dew/steamoji_copyparty!")
 
 if not glob("copyparty-sfx.py"):
-    print("Missing copyparty-sfx.py! Please redownload from https://github.com/h-dew/steamoji_copyparty")
+    print("Missing copyparty-sfx.py! Please redownload from: https://github.com/h-dew/steamoji_copyparty")
+
+# check for paths.toml
+if not glob("paths.toml"):
+    print("Could not find paths.toml in ... please redownload from: https://github.com/h-dew/steamoji_copyparty")
+
 
 # to change apprentice folder name, can set APPRENTICE_FOLDER_NAME right here
 #  EX: generate_auth.APPRENTICE_FOLDER_NAME = "folder"
@@ -23,6 +28,8 @@ if not glob("copyparty-sfx.py"):
 # check if apprentice parent folder exists
 #if not glob("../" + generate_auth.APPRENTICE_FOLDER_NAME):
 #    print("Could not find apprentice container folder! Check this script and manually change APPRENTICE_FOLDER_NAME above if needed")
+
+
 
 # generate auth
 print("Generating users from apprentice folder: " + apprenticeFolderName)
