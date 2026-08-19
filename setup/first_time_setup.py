@@ -51,8 +51,17 @@ if os.geteuid() != 0:
 
 # get username (NEEDS VALIDATION ON DEBIAN)
 # 'sudo_user' env variable used as this run as sudo and most other methods return the root user
-user = os.getenv('SUDO_USER')
 USER_PLACEHOLDER = "{usr}"
+
+username = os.environ.get("SUDO_USER")
+
+if username:
+    # Safely expands to /home/username or /Users/username
+    home_dir = Path(f"~{username}").expanduser()
+else:
+    # Fallback if running normally without sudo
+    home_dir = Path.home()
+
 
 
 # Get user's home dir and create path to installation destination
