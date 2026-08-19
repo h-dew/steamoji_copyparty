@@ -65,6 +65,8 @@ else:
     # Fallback if running normally without sudo
     dest_dir = Path.home()
 
+dest_dir = str(dest_dir)
+
 src_dir = os.path.dirname(script_dir)
 
 
