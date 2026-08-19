@@ -60,14 +60,20 @@ dest_dir = os.path.join(os.path.expanduser("~"), "steamojicopyparty")
 src_dir = os.path.dirname(script_dir)
 
 
-
+installed = False
 
 ## OUTLINE
 # if old files exist. delete them.
 
 if glob(dest_dir):
     print("Already found an installation at:" + dest_dir)
-    print("Delete old installation and replace? Apprentice folder will not be modified. Press Y to continue")
+    print("Delete old installation and replace? Apprentice folder will not be modified.")
+    installed = True
+else:
+    print("No install found, will install to: " + dest_dir)
+
+if True:
+    print("Press Y to continue")
     while True:
         userConfirmation = input()
 
@@ -82,8 +88,13 @@ if glob(dest_dir):
                 break
  
             else:
-                print("Leaving old installation...")
-                time.sleep(2)
+                if installed:
+                    print("Leaving old installation...")
+                    time.sleep(2)
+                else:
+                    print("Cannot continue with no install, exiting")
+                    time.sleep(2)
+                    sys.exit()
 
                 break
 
