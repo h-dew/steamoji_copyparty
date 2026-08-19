@@ -79,12 +79,14 @@ if True:
 
         if len(userConfirmation) > 0:
             if userConfirmation.lower() == "y":
-                print("Deleting old installation...")
-                shutil.rmtree(dest_dir)
+
+                if installed:
+                    print("Deleting old installation...")
+                    shutil.rmtree(dest_dir)
 
                 # copy the repo to home folder
                 shutil.copytree(src_dir, dest_dir)
-
+                print("Successfully copied!")
                 break
  
             else:
