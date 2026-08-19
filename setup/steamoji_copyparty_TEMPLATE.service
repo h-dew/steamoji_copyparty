@@ -16,10 +16,9 @@ ExitType=main
 
 WorkingDirectory=/home/{usr}/steamojicopyparty
 
-User={usr}
-Group={usr}
+User=root
 
-# Ensures the program 
+# Ensures the program restarts on fail 
 Restart=always
 
 [Install]
