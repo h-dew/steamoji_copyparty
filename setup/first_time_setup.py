@@ -60,15 +60,11 @@ print(username)
 
 if username:
     # Safely expands to /home/username or /Users/username
-    home_dir = Path(f"~{username}").expanduser()
+    dest_dir = Path(f"~{username}").expanduser()
 else:
     # Fallback if running normally without sudo
-    home_dir = Path.home()
+    dest_dir = Path.home()
 
-
-
-# Get user's home dir and create path to installation destination
-dest_dir = os.path.join(os.path.expanduser("~"), "steamojicopyparty")
 src_dir = os.path.dirname(script_dir)
 
 
