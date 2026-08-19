@@ -56,6 +56,8 @@ USER_PLACEHOLDER = "{usr}"
 
 username = os.environ.get("SUDO_USER")
 
+print(username)
+
 if username:
     # Safely expands to /home/username or /Users/username
     home_dir = Path(f"~{username}").expanduser()
