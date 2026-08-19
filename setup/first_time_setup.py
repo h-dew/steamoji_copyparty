@@ -129,7 +129,7 @@ restart_timer_dest = os.path.join("/etc/systemd/system/", restart_timer)
 # Open template, replace {usr} placeholder
 with open(unit_template_path_rel, "r") as file:
     text = file.read() 
-    text = text.replace(USER_PLACEHOLDER, user)
+    text = text.replace(USER_PLACEHOLDER, username)
 
 
 
