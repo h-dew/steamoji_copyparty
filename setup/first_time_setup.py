@@ -67,6 +67,8 @@ else:
 
 dest_dir = str(dest_dir)
 
+dest_dir = dest_dir + "steamoji_copyparty"
+
 src_dir = os.path.dirname(script_dir)
 
 
@@ -91,7 +93,7 @@ if True:
             if userConfirmation.lower() == "y":
 
                 if installed:
-                    print("Deleting old installation...")
+                    print("Deleting folder: " + dest_dir)
                     shutil.rmtree(dest_dir)
 
                 # copy the repo to home folder
