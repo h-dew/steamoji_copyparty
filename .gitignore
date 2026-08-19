@@ -1,3 +1,5 @@
 # user configuration is generated, so ignore
 users.conf
 __pycache__
+
+setup/steamoji_copyparty.service

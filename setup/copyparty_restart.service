@@ -3,4 +3,4 @@ Description=Restarts copyparty, called by timer every day at 4AM
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/systemctl restart your-service.service
+ExecStart=/usr/bin/systemctl restart steamoji_copyparty.service

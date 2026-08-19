@@ -8,6 +8,31 @@ import sys
 
 from glob import glob
 
+# HELPER
+# makes checking systemctl easier
+def manage_service(action, service_name):
+    
+    try:
+        # Construct the command safely as a list
+        command = ["systemctl", action, service_name]
+
+        if len(service_name) < 1:
+            command = ["systemctl", action]
+
+        
+        # Run the command and capture text output
+        result = subprocess.run(command, capture_output=True, text=True, check=True)
+        
+        print(f"Success: {action} on {service_name} completed.")
+        return result.stdout
+        
+    except subprocess.CalledProcessError as e:
+        print(f"Error executing systemctl: {e.stderr}")
+        return None
+
+
+
+
 ## DOUBLE CHECK WE'RE IN THE RIGHT DIRECTORY
 # Get the directory of the current script
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -15,11 +40,13 @@ os.chdir(script_dir)
 
 ## double check the os!! idk why but this may be needed
 if not sys.platform.startswith('linux'):
-    print("This script only runs on Linux!\nThe fileserver can be run in Windows, but the start.py file must be opened manually.")
+    print("Error! This script only runs on Linux! It registers copyparty as a service and makes it run on boot.\nThe fileserver can be run in Windows, but the start.py file must be opened manually.")
     print("Automatically exiting in 5 seconds")
     time.sleep(5)
     sys.exit()
 
+if os.geteuid() != 0:
+        sys.exit("Error! This script must be run as root or with sudo.")
 
 
 # get username (NEEDS VALIDATION ON DEBIAN)
@@ -64,12 +91,14 @@ if glob(dest_dir):
 
 # now that application is in place, generate unit file
 unit_template_path_rel = "steamojicopyparty_TEMPLATE.service"
-unit_path_rel = "steamojicopyparty.service"
-
-restart_unit = "copypartyrestart.service"
-restart_timer = "copypartyrestart.timer"
-
+unit_path_rel = "steamoji_copyparty.service"
 unit_dest_path = os.path.join("/etc/systemd/system/", unit_path_rel)
+
+restart_unit = "copyparty_restart.service"
+restart_unit_dest = os.path.join("etc/systemd/system/", restart_unit)
+restart_timer = "copyparty_restart.timer"
+restart_timer_dest = os.path.join("etc/systemd/system/", restart_timer)
+
 
 
 # Open template, replace {usr} placeholder
@@ -87,12 +116,28 @@ with open(unit_path_rel, "w") as file:
 # Copy to /etc/systemd/system - this is where admin-created systemd unit files live
 shutil.copy(unit_path_rel, unit_dest_path)
 
+#also copy timer and restart units
+shutil.copy(restart_unit, restart_unit_dest)
+shutil.copy(restart_timer, restart_timer_dest)
+
 
 # double check the service file is there before registering 
 if not glob(unit_dest_path):
-    print("Service not found in folder! Try copying \"steamojicopyparty.service\" to to \"/etc/systemd/system\" manually!")
+    print("Core service not found in folder! Try copying \"steamojicopyparty.service\" to \"/etc/systemd/system\" manually!")
+    time.sleep(5)
+    sys.exit()
+
+if not glob(restart_unit_dest) or not glob(restart_timer_dest):
+    print("Restart unit or timer not found in folder! Try copying \"copyparty_restart.service\" and \"copyparty_restart.timer\" to \"/etc/systemd/system\" manually!")
+    time.sleep(5)
+    sys.exit()
+
 
 
 
 # REGISTER UNITS
 # Only timer needs to be registered for the restart unit
+manage_service("daemon-reload", "")
+manage_service("enable", "steamoji_copyparty.service")
+manage_service("enable", "copyparty_restart.timer")
+
