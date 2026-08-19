@@ -111,7 +111,7 @@ def generateConfFile():
         raise FileNotFoundError("Could not find storage drive! It should be mounted to /mnt/" + storageDriveName + "/. Make sure the drive is mounted and that it is mounted to the correct location.")
 
     if not glob(backupDrivePath):
-        raise FileNotFoundError("Could not find backup drive! It should be mounted to /mnt/" + storageDriveName + "/. Make sure the drive is mounted and that it is mounted to the correct location.")
+        print("Could not find backup drive! It should be mounted to /mnt/" + storageDriveName + "/. Make sure the drive is mounted and that it is mounted to the correct location.")
 
 
     # double check that the apprentice, project files, and misc folders exist
