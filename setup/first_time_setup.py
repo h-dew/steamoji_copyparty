@@ -95,9 +95,9 @@ unit_path_rel = "steamoji_copyparty.service"
 unit_dest_path = os.path.join("/etc/systemd/system/", unit_path_rel)
 
 restart_unit = "copyparty_restart.service"
-restart_unit_dest = os.path.join("etc/systemd/system/", restart_unit)
+restart_unit_dest = os.path.join("/etc/systemd/system/", restart_unit)
 restart_timer = "copyparty_restart.timer"
-restart_timer_dest = os.path.join("etc/systemd/system/", restart_timer)
+restart_timer_dest = os.path.join("/etc/systemd/system/", restart_timer)
 
 
 
