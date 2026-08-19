@@ -6,6 +6,7 @@ import shutil
 import time
 import sys
 
+from pathlib import Path
 from glob import glob
 
 # HELPER
