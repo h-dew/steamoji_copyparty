@@ -67,7 +67,7 @@ else:
 
 dest_dir = str(dest_dir)
 
-dest_dir = dest_dir + "steamoji_copyparty"
+dest_dir = dest_dir + "/steamoji_copyparty"
 
 src_dir = os.path.dirname(script_dir)
 
