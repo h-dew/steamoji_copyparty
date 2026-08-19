@@ -90,7 +90,7 @@ if glob(dest_dir):
 
 
 # now that application is in place, generate unit file
-unit_template_path_rel = "steamojicopyparty_TEMPLATE.service"
+unit_template_path_rel = "steamoji_copyparty_TEMPLATE.service"
 unit_path_rel = "steamoji_copyparty.service"
 unit_dest_path = os.path.join("/etc/systemd/system/", unit_path_rel)
 
