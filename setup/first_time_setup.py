@@ -50,10 +50,7 @@ if os.geteuid() != 0:
         sys.exit("Error! This script must be run as root or with sudo.")
 
 
-# get username (NEEDS VALIDATION ON DEBIAN)
-# 'sudo_user' env variable used as this run as sudo and most other methods return the root user
 USER_PLACEHOLDER = "{usr}"
-
 username = os.environ.get("SUDO_USER")
 
 print(username)
@@ -65,12 +62,8 @@ else:
     # Fallback if running normally without sudo
     dest_dir = Path.home()
 
-dest_dir = str(dest_dir)
-
-dest_dir = dest_dir + "/steamoji_copyparty"
-
+dest_dir = str(dest_dir) + "/steamoji_copyparty"
 src_dir = os.path.dirname(script_dir)
-
 
 installed = False
 
@@ -158,11 +151,10 @@ if not glob(restart_unit_dest) or not glob(restart_timer_dest):
     sys.exit()
 
 
-
-
 # REGISTER UNITS
 # Only timer needs to be registered for the restart unit
 manage_service("daemon-reload", "")
 manage_service("enable", "steamoji_copyparty.service")
 manage_service("enable", "copyparty_restart.timer")
+manage_service("daemon-reload", "")
 

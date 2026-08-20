@@ -111,7 +111,7 @@ def generateConfFile():
         raise FileNotFoundError("Could not find storage drive! It should be mounted to /mnt/" + storageDriveName + "/. Make sure the drive is mounted and that it is mounted to the correct location.")
 
     if not glob(backupDrivePath):
-        print("Could not find backup drive! It should be mounted to /mnt/" + storageDriveName + "/. Make sure the drive is mounted and that it is mounted to the correct location.")
+        print("Could not find backup drive! It should be mounted to /mnt/" + storageDriveName + "/. Make sure the drive is mounted and that it is mounted to the correct location.", flush=True)
 
 
     # double check that the apprentice, project files, and misc folders exist
@@ -138,13 +138,15 @@ def generateConfFile():
     with open("./users.conf", "w", encoding="utf-8") as file:
         file.write(generateAccounts(apprentices))
         file.write("\n\n")
+
         file.write(generateGroup(apprentices))
         file.write("\n\n")
-        file.write(fillTemplate(storageDriveName, backupDriveName,
-                                projectFilesFolderName, miscFolderName))
+
+        file.write(fillTemplate(storageDriveName, backupDriveName, projectFilesFolderName, miscFolderName))
         file.write("\n\n")
+
         file.write(generateVolume(apprentices, apprenticeFolderPath))
 
-    print("Wrote to users.conf sucessfully")
+    print("Wrote to users.conf sucessfully", flush=True)
 
 

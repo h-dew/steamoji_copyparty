@@ -11,14 +11,14 @@ apprenticeFolderName = "apprentice_folders"
 
 # check for required files
 if not glob("main.conf"):
-    print("Missing main.conf! Please redownload from: https://github.com/h-dew/steamoji_copyparty!")
+    print("Missing main.conf! Please redownload from: https://github.com/h-dew/steamoji_copyparty!", flush=True)
 
 if not glob("copyparty-sfx.py"):
-    print("Missing copyparty-sfx.py! Please redownload from: https://github.com/h-dew/steamoji_copyparty")
+    print("Missing copyparty-sfx.py! Please redownload from: https://github.com/h-dew/steamoji_copyparty", flush=True)
 
 # check for paths.toml
 if not glob("paths.toml"):
-    print("Could not find paths.toml in ... please redownload from: https://github.com/h-dew/steamoji_copyparty")
+    print("Could not find paths.toml in ... please redownload from: https://github.com/h-dew/steamoji_copyparty", flush=True)
 
 
 # to change apprentice folder name, can set APPRENTICE_FOLDER_NAME right here
@@ -32,12 +32,12 @@ if not glob("paths.toml"):
 
 
 # generate auth
-print("Generating users from apprentice folder: " + apprenticeFolderName)
+print("Generating users from apprentice folder: " + apprenticeFolderName, flush=True)
 generate_auth.generateConfFile()
 
 # double check that we have the users file
 if not glob("users.conf"):
-    print("Could not find users.conf... should've been generated earlier. Check apprentice folder layout or" + " generate_auth.py")
+    print("Could not find users.conf... should've been generated earlier. Check apprentice folder layout or reinstall", flush=True)
 
 
 # FINISH LATER

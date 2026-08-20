@@ -11,11 +11,10 @@ After=multi-user.target
 
 [Service]
 Type=exec
-ExecStart=/usr/bin/python3 /home/{usr}/steamojicopyparty/start.py
+ExecStart=/usr/bin/python3 -u start.py
 ExitType=main
 
 WorkingDirectory=/home/{usr}/steamojicopyparty
-
 User=root
 
 StandardOutput=journal
