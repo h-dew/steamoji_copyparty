@@ -66,5 +66,6 @@ i chose copyparty as a file server due to its ease of use, wide compatability, s
 
 - backups
     - will need to be done manually. copyparty's DB is be able to rebuild on restoration
-
+ 
+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
 
