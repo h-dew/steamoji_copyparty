@@ -14,7 +14,7 @@ Type=exec
 ExecStart=/usr/bin/python3 -u start.py
 ExitType=main
 
-WorkingDirectory=/home/{usr}/steamojicopyparty
+WorkingDirectory=/home/{usr}/steamoji_copyparty
 User=root
 
 StandardOutput=journal
