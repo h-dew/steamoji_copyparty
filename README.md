@@ -1,11 +1,10 @@
 # Steamoji Kelowna File Server
 
-## Running
-Place repo inside folder (name doesn't matter), with the "apprentices" folder as a sibling
+## About
+Uses [copyparty](https://github.com/9001/copyparty), runs on most Python versions. Version >=3.14 is needed for reflink deduplication support. Intended to be run on a Linux system, though it theoretically can run on others.
 
-Uses [copyparty](https://github.com/9001/copyparty), runs on most Python versions. Version >=3.14 is needed for reflink deduplication support. 
-
-
+## Install
+Clone this repository anywhere (`git clone https://github.com/h-dew/steamoji_copyparty`) and run `setup/first_time_setup.py` as sudo, ex: `sudo python3 setup/first_time_setup.py`. The contents of the repository will be copied to the current user's home folder. 
 
 
 
