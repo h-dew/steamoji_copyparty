@@ -5,6 +5,7 @@ import os
 import sys
 
 from glob import glob
+from fileserver_backup import run_startup_backup
 
 # get drive and folder names
 apprenticeFolderName = "apprentice_folders"
@@ -40,7 +41,24 @@ if not glob("users.conf"):
     print("Could not find users.conf... should've been generated earlier. Check apprentice folder layout or reinstall", flush=True)
 
 
-# FINISH LATER
+# BACKUP TIME
+
+print("Executing server boot sequence...")
+    
+# Run backup check (only backs up if >= 7 days since last run)
+backup_success = run_startup_backup(
+    config_file="/etc/fileserver/paths.toml",
+    force=False,      # Set to True if you ever need an emergency override
+    dry_run=False
+)
+    
+if not backup_success:
+    print("Warning: Backup step encountered issues. Check backup log for details.")
+else:
+    print("Backup check complete.")
+
+
+
 target_script = "copyparty-sfx.py"
 
 args = [sys.executable, target_script, "-c", "main.conf"]
