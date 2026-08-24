@@ -80,7 +80,7 @@ strict_mode = false
 class BackupConfig:
     # loads and parses settings from paths.toml
 
-    def __init__(self, config_path: str = "../paths.toml"):
+    def __init__(self, config_path: str = "/paths.toml"):
         cp = Path(config_path)
         if not cp.exists() and not cp.is_absolute():
             script_dir_cp = Path(__file__).resolve().parent / config_path
