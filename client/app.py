@@ -1,19 +1,15 @@
-"""
-Tkinter front-end for connect.py
+# Tkinter front-end for connect.py
 
-Main window   -> single "Name" field for apprentices, calls connectApprentice(name, "")
-Advanced menu -> username / password / host / volume fields, calls connect(...)
+# Main window   -> single "Name" field for apprentices, calls connectApprentice(name, "")
+# Advanced menu -> username / password / host / volume fields, calls connect(...)
 
-A system tray icon shows connection status (green = connected, red = not
-connected). Right-clicking it lets you close the active connection or exit
-the app.
+# A system tray icon shows connection status (green = connected, red = not connected). 
+# Right-clicking it lets you close the active connection or exit the app.
 
-Requires:
+#Requires:
     pip install pystray pillow
-(tkinter ships with standard Python on Windows)
 
-also gonna be bundled so who cares
-"""
+# also gonna be bundled so who cares
 
 import threading
 import queue
@@ -89,15 +85,8 @@ def tray_close_connection(icon, item):
 
 
 def terminate_mount():
-    """Stop the active rclone mount, if any. Safe to call multiple times.
-
-    Tries a normal terminate() first and gives it a few seconds to exit
-    cleanly, then escalates to kill() if it's still hanging around. note that
-    on Windows, Popen.terminate() is a hard TerminateProcess call (there's
-    no real SIGTERM), so this is about as graceful as we can be without
-    changing how connect.py spawns the process (like a CTRL_BREAK-capable
-    process group + rclone's own unmount signal handling). I don't really care though
-    """
+    # Stop the active rclone mount, if any. Safe to call multiple times.
+ 
     proc = state.process
     if proc is not None and proc.poll() is None:
         try:
@@ -195,7 +184,7 @@ def handle_connect_result(result):
         messagebox.showerror("Connection failed", f"An error occurred:\n{result}")
     elif isinstance(result, int):
         # connect() returns 1 (int) on failure (e.g. host didn't resolve)
-        messagebox.showerror("Connection failed", "Could not connect. Check the hostname and try again.")
+        messagebox.showerror("Connection failed", "Could not connect. Make sure the fileserver is activeor check the hostname.")
     else:
         # Otherwise we got a Popen object back, success
         state.set_process(result)
@@ -208,9 +197,8 @@ def handle_connect_result(result):
 # Main window
 
 def confirm_reconnect_if_needed():
-    """If already busy, tell the user to wait. If already connected, confirm
-    before dropping that connection to start a new one. Returns True if it's
-    OK to proceed with a new connect attempt."""
+    # if already busy, tell the user to wait. If already connected, confirm
+    # before dropping that connection to start a new one.
     if state.busy:
         messagebox.showinfo("Please wait", "Already connecting - please wait for that to finish.")
         return False
@@ -275,7 +263,7 @@ def add_placeholder(entry, text):
 
 
 def get_real_value(entry, placeholder_text):
-    """Return '' if the entry is still showing its placeholder, else its value."""
+    # return '' if the entry is still showing its placeholder, else its value
     val = entry.get()
     if val == placeholder_text and str(entry.cget("foreground")) == PLACEHOLDER_COLOR:
         return ""
@@ -364,14 +352,14 @@ status_var = tk.StringVar(value="Status: Not connected")
 status_label = ttk.Label(main_frame, textvariable=status_var)
 status_label.grid(row=3, column=0, columnspan=2, pady=(0, 4))
 
-# advanced options tucked away in the corner, out of the way for the children
+# advanced options tucked away in the corner, out of the apprentices' way
 advanced_link = ttk.Label(main_frame, text="Advanced options", foreground="#4444aa", cursor="hand2", font=("TkDefaultFont", 8, "underline"))
 advanced_link.grid(row=4, column=0, columnspan=2, sticky="e", pady=(8, 0))
 advanced_link.bind("<Button-1>", lambda _e: open_advanced_window())
 
 
 def on_window_close():
-    # Hide to tray instead of quitting outright, the mount stays alive and
+    # hide to tray instead of quitting outright, the mount stays alive and
     # can be reopened from the tray icon. Use tray "Exit" to actually quit
     # (which terminates the mount).
     root.withdraw()
