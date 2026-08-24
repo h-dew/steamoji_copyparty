@@ -80,7 +80,7 @@ strict_mode = false
 class BackupConfig:
     # loads and parses settings from paths.toml
 
-    def __init__(self, config_path: str = "/paths.toml"):
+    def __init__(self, config_path: str = "paths.toml"):
         cp = Path(config_path)
         if not cp.exists() and not cp.is_absolute():
             script_dir_cp = Path(__file__).resolve().parent / config_path
@@ -159,7 +159,8 @@ class BackupConfig:
         for key, rel_path in folders_sec.items():
             self.sources[key] = self.storage_drive / rel_path
 
-        opts_sec = self.raw_config.get("backup_options", {})
+        # Fallback to legacy [options] header if [backup_options] isn't found
+        opts_sec = self.raw_config.get("backup_options") or self.raw_config.get("options", {})
         self.min_disk_space_gb = float(opts_sec.get("min_disk_space_gb", 150.0))
         self.zip_backup = bool(opts_sec.get("zip_backup", True))
         self.zip_compression = bool(opts_sec.get("zip_compression", True))
@@ -177,7 +178,7 @@ class BackupConfig:
 class FileServerBackup:
     # main backup execution engine
 
-    def __init__(self, config_path: str = "../paths.toml", dry_run: bool = False, force: bool = False):
+    def __init__(self, config_path: str = "paths.toml", dry_run: bool = False, force: bool = False):
         self.dry_run = dry_run
         self.force = force
         self.config = BackupConfig(config_path)
@@ -573,7 +574,7 @@ class FileServerBackup:
 
 
 # main function to import into server startup script
-def run_startup_backup(config_file: str = "../paths.toml", force: bool = False, dry_run: bool = False) -> bool:
+def run_startup_backup(config_file: str = "paths.toml", force: bool = False, dry_run: bool = False) -> bool:
     backup_job = FileServerBackup(config_path=config_file, dry_run=dry_run, force=force)
     return backup_job.run_backup()
 
@@ -585,7 +586,7 @@ run_weekly_backup = run_startup_backup
 # run directly from command line
 def main():
     parser = argparse.ArgumentParser(description="Fileserver backup utility")
-    parser.add_argument("-c", "--config", default="../paths.toml", help="Path to paths.toml config")
+    parser.add_argument("-c", "--config", default="paths.toml", help="Path to paths.toml config")
     parser.add_argument("-f", "--force", action="store_true", help="Force backup run regardless of interval")
     parser.add_argument("--dry-run", action="store_true", help="Simulate backup without copying files")
 
