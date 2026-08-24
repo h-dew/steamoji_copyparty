@@ -68,8 +68,7 @@ def connect(username, password, host, volume):
     subprocess.run(generateConfig(host, username, password))
 
     return subprocess.Popen(generateMountCommand(host, volume),
-                     stdout=subprocess.PIPE,
-                     timeout=21600)
+                     stdout=subprocess.PIPE)
 
 def connectApprentice(username, host):
     if len(host) < 1:
