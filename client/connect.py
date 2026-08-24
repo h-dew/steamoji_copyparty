@@ -47,9 +47,9 @@ def connect(username, password, host, volume):
     if shutil.which("rclone") is None:
         subprocess.run("winget install Rclone.Rclone",
                        shell=True)
+        subprocess.run("winget install WinFsp.WinFsp",
+                       shell=True)
 
-    if shutil.which("winfsp") is None:
-        subprocess.run("winget install WinFsp.WinFsp")
 
     if len(host) < 1:
         # just a fallback in case
@@ -75,5 +75,4 @@ def connectApprentice(username, host):
     if len(host) < 1:
         host = "StoragePC"
 
-    host = "bee"
     return connect(username, username, host, "")
