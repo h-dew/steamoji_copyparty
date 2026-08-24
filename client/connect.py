@@ -61,7 +61,7 @@ def connect(username, password, host, volume):
         ip = getIp(host)
 
     except:
-        print("Could not resolve host's IP! Check hostname.")
+        print("Could not resolve host's IP! Check hostname. (" + host + ")")  
         return 1
 
     ## NVMMM WE USING POPEN
