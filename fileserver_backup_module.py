@@ -54,6 +54,11 @@ log_file = "/var/log/fileserver_backup.log"
 lock_file = "/var/run/fileserver_backup.lock"
 
 [backup_options]
+# Which folders from the [folders] section to include in the backup
+active_folders = [
+    "apprenticeFolder"
+]
+
 # Minimum free storage required on destination drive (in GB)
 min_disk_space_gb = 150.0
 
@@ -102,6 +107,7 @@ class BackupConfig:
         self.min_disk_space_gb: float = 150.0
         self.zip_backup: bool = True
         self.zip_compression: bool = True
+        self.active_folders: List[str] = ["apprenticeFolder"]
         self.ignore_patterns: List[str] = []
         self.strict_mode: bool = False
 
@@ -154,13 +160,17 @@ class BackupConfig:
         self.log_file = Path(backup_sec.get("log_file", "/var/log/fileserver_backup.log"))
         self.lock_file = Path(backup_sec.get("lock_file", "/var/run/fileserver_backup.lock"))
 
+        # Fallback to legacy [options] header if [backup_options] isn't found
+        opts_sec = self.raw_config.get("backup_options") or self.raw_config.get("options", {})
+        self.active_folders = opts_sec.get("active_folders", ["apprenticeFolder"])
+
         folders_sec = self.raw_config.get("folders", {})
         self.sources = {}
         for key, rel_path in folders_sec.items():
+            if self.active_folders and key not in self.active_folders:
+                continue
             self.sources[key] = self.storage_drive / rel_path
 
-        # Fallback to legacy [options] header if [backup_options] isn't found
-        opts_sec = self.raw_config.get("backup_options") or self.raw_config.get("options", {})
         self.min_disk_space_gb = float(opts_sec.get("min_disk_space_gb", 150.0))
         self.zip_backup = bool(opts_sec.get("zip_backup", True))
         self.zip_compression = bool(opts_sec.get("zip_compression", True))

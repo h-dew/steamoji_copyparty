@@ -34,6 +34,11 @@ log_file = "/var/log/fileserver_backup.log"
 lock_file = "/var/run/fileserver_backup.lock"
 
 [backup_options]
+# Which folders from the [folders] section to include in the backup
+active_folders = [
+    "apprenticeFolder"
+]
+
 # Minimum free storage required on destination drive (in GB)
 min_disk_space_gb = 150.0
 
