@@ -47,7 +47,7 @@ print("Executing server boot sequence...")
     
 # Run backup check (only backs up if >= 7 days since last run)
 backup_success = run_startup_backup(
-    config_file="/etc/fileserver/paths.toml",
+    config_file="paths.toml",
     force=False,      # Set to True if you ever need an emergency override
     dry_run=False
 )
