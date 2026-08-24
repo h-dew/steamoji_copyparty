@@ -24,7 +24,7 @@ def getEmptyDrive():
 
     return empty_slot
 
-def getIp(hostname)
+def getIp(hostname):
     # Get IP of server
     # mDNS baybeeee!!
     return socket.gethostbyname(hostname)
