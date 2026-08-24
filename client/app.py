@@ -1,18 +1,15 @@
 """
-File Server Client
--------------------
-Simple Tkinter front-end for connect.py
+Tkinter front-end for connect.py
 
 Main window   -> single "Name" field for apprentices, calls connectApprentice(name, "")
 Advanced menu -> username / password / host / volume fields, calls connect(...)
 
-A system tray icon shows connection status (green = connected, red = not
-connected). Right-clicking it lets you close the active connection or exit
+The system tray icon shows connection status (green = connected, red = not
+connected). Right-click to close the active connection or exit
 the app.
 
 Requires:
     pip install pystray pillow
-(tkinter ships with standard Python on Windows)
 """
 
 import threading
@@ -23,12 +20,10 @@ from tkinter import ttk, messagebox
 from PIL import Image, ImageDraw
 import pystray
 
-import connect  # your connect.py module
+import connect  # our connection module
 
 
-# ---------------------------------------------------------------------------
-# Shared state
-# ---------------------------------------------------------------------------
+# shared state
 
 class AppState:
     """Holds the current mount subprocess so the tray icon / UI can react."""
@@ -47,13 +42,11 @@ class AppState:
 
 state = AppState()
 
-# Thread-safe channel for background work to report results back to the UI thread
+# thread-safe channel for background work to report results to ui thread
 result_queue = queue.Queue()
 
 
-# ---------------------------------------------------------------------------
-# Tray icon
-# ---------------------------------------------------------------------------
+# tray icon
 
 def make_dot_icon(color):
     """Draw a simple colored circle as the tray icon (no external icon files needed)."""
@@ -81,32 +74,43 @@ def refresh_tray():
     else:
         tray_icon.icon = ICON_RED
         tray_icon.title = "File Server Client - Not connected"
-    # Force the menu to re-evaluate the "enabled" state of Close Connection
+    # force the menu to re-evaluate the enabled state of Close Connection
     tray_icon.update_menu()
 
 
 def tray_close_connection(icon, item):
+    terminate_mount()
+    refresh_tray()
+
+
+def terminate_mount():
+    """Kill the active rclone mount, if any. Safe to call multiple times."""
     if state.is_connected():
         try:
             state.process.terminate()
         except Exception:
             pass
         state.set_process(None)
-        refresh_tray()
 
 
 def tray_exit(icon, item):
-    if state.is_connected():
-        try:
-            state.process.terminate()
-        except Exception:
-            pass
+    terminate_mount()
     icon.stop()
     root.after(0, root.destroy)
 
 
+def tray_show_window(icon=None, item=None):
+    # called from the tray thread, hop back onto the Tk main thread to touch the ui
+    def _show():
+        root.deiconify()
+        root.lift()
+        root.focus_force()
+    root.after(0, _show)
+
+
 def build_tray_icon():
     menu = pystray.Menu(
+        pystray.MenuItem("Open", tray_show_window, default=True),
         pystray.MenuItem(
             "Close Connection",
             tray_close_connection,
@@ -118,9 +122,7 @@ def build_tray_icon():
     return icon
 
 
-# ---------------------------------------------------------------------------
-# Background worker helpers
-# ---------------------------------------------------------------------------
+# background worker helpers
 
 def run_in_background(target, *args):
     """Run a connect.py call off the UI thread, since it may shell out to
@@ -155,7 +157,7 @@ def handle_connect_result(result):
         # connect() returns 1 (int) on failure (e.g. host didn't resolve)
         messagebox.showerror("Connection failed", "Could not connect. Check the hostname and try again.")
     else:
-        # Otherwise we got a Popen object back -> success
+        # otherwise we got a Popen object back -> success
         state.set_process(result)
         messagebox.showinfo("Connected", "Connection established.")
 
@@ -163,9 +165,7 @@ def handle_connect_result(result):
     set_status_label()
 
 
-# ---------------------------------------------------------------------------
-# Main window
-# ---------------------------------------------------------------------------
+# main window
 
 def submit_simple():
     name = simple_name_var.get().strip()
@@ -186,8 +186,7 @@ def set_status_label():
         status_label.config(foreground="#993333")
 
 
-# --- Advanced window ---------------------------------------------------
-
+# advanced window 
 PLACEHOLDER = "leave empty for default"
 PLACEHOLDER_COLOR = "grey"
 NORMAL_COLOR = "black"
@@ -263,9 +262,7 @@ def open_advanced_window():
     submit_btn.grid(row=4, column=0, columnspan=2, pady=(12, 0))
 
 
-# ---------------------------------------------------------------------------
-# Build main window
-# ---------------------------------------------------------------------------
+# build main window
 
 root = tk.Tk()
 root.title("File Server Client")
@@ -289,30 +286,35 @@ status_var = tk.StringVar(value="Status: Not connected")
 status_label = ttk.Label(main_frame, textvariable=status_var)
 status_label.grid(row=3, column=0, columnspan=2, pady=(0, 4))
 
-# Advanced options tucked away in the corner, out of the apprentices' way
+# advanced options tucked away in the corner, out of the apprentices' way
 advanced_link = ttk.Label(main_frame, text="Advanced options", foreground="#4444aa", cursor="hand2", font=("TkDefaultFont", 8, "underline"))
 advanced_link.grid(row=4, column=0, columnspan=2, sticky="e", pady=(8, 0))
 advanced_link.bind("<Button-1>", lambda _e: open_advanced_window())
 
 
 def on_window_close():
-    # Hide to tray instead of quitting outright, so the mount stays alive
+    # hide to tray instead of quitting outright - the mount stays alive and
+    # can be reopened from the tray icon. use tray "Exit" to actually quit
+    # (which terminates the mount).
     root.withdraw()
 
 
 root.protocol("WM_DELETE_WINDOW", on_window_close)
 
+# no matter how the process ends
+# make sure we don't leave the orphaned rclone mount running.
+import atexit
+atexit.register(terminate_mount)
 
-# ---------------------------------------------------------------------------
-# Entry point
-# ---------------------------------------------------------------------------
+
+# entry point
 
 def main():
     global tray_icon
     tray_icon = build_tray_icon()
 
-    # pystray's icon.run() is blocking, so it gets its own thread;
-    # Tk's mainloop stays on the main thread.
+    # pystray's icon.run() is blocking, so it gets its own thread
+    # Tk's mainloop stays on the main thread
     threading.Thread(target=tray_icon.run, daemon=True).start()
 
     root.after(200, poll_result_queue)
