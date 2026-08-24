@@ -7,7 +7,7 @@
 # Right-clicking it lets you close the active connection or exit the app.
 
 #Requires:
-    pip install pystray pillow
+#    pip install pystray pillow
 
 # also gonna be bundled so who cares
 
