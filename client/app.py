@@ -184,7 +184,7 @@ def handle_connect_result(result):
         messagebox.showerror("Connection failed", f"An error occurred:\n{result}")
     elif isinstance(result, int):
         # connect() returns 1 (int) on failure (e.g. host didn't resolve)
-        messagebox.showerror("Connection failed", "Could not connect. Make sure the fileserver is activeor check the hostname.")
+        messagebox.showerror("Connection failed", "Could not connect. Make sure the fileserver is online and ensure the hostname is correct.")
     else:
         # Otherwise we got a Popen object back, success
         state.set_process(result)
