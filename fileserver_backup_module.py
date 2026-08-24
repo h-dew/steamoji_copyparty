@@ -83,8 +83,6 @@ strict_mode = false
 
 
 class BackupConfig:
-    # loads and parses settings from paths.toml
-
     def __init__(self, config_path: str = "paths.toml"):
         cp = Path(config_path)
         if not cp.exists() and not cp.is_absolute():
@@ -131,7 +129,6 @@ class BackupConfig:
 
         return Path("/mnt") / drive_name_or_path
 
-    # read toml file into settings properties
     def load(self) -> None:
         if not self.config_path.exists():
             print(f"[WARN] Config file '{self.config_path}' not found, creating default paths.toml")
@@ -160,7 +157,6 @@ class BackupConfig:
         self.log_file = Path(backup_sec.get("log_file", "/var/log/fileserver_backup.log"))
         self.lock_file = Path(backup_sec.get("lock_file", "/var/run/fileserver_backup.lock"))
 
-        # Fallback to legacy [options] header if [backup_options] isn't found
         opts_sec = self.raw_config.get("backup_options") or self.raw_config.get("options", {})
         self.active_folders = opts_sec.get("active_folders", ["apprenticeFolder"])
 
@@ -186,8 +182,6 @@ class BackupConfig:
 
 
 class FileServerBackup:
-    # main backup execution engine
-
     def __init__(self, config_path: str = "paths.toml", dry_run: bool = False, force: bool = False):
         self.dry_run = dry_run
         self.force = force
@@ -362,7 +356,6 @@ class FileServerBackup:
 
         return True
 
-    # copy directory tree directly to folder
     def _copy_directory_tree(self, src: Path, dst: Path) -> None:
         ignore_spec = shutil.ignore_patterns(*self.config.ignore_patterns)
 
@@ -401,7 +394,6 @@ class FileServerBackup:
                     if self.config.strict_mode:
                         raise RuntimeError(f"Strict mode enabled. Stopping on error: {e}")
 
-    # zip directory tree directly into archive file
     def _zip_directory_tree(self, src: Path, zip_file: Optional[zipfile.ZipFile], arc_prefix: str = "") -> None:
         ignore_spec = shutil.ignore_patterns(*self.config.ignore_patterns)
 
@@ -432,7 +424,6 @@ class FileServerBackup:
                     if self.config.strict_mode:
                         raise RuntimeError(f"Strict mode enabled. Stopping on error: {e}")
 
-    # run full backup workflow
     def run_backup(self) -> bool:
         self.logger.info("=" * 60)
         self.logger.info(f"Starting fileserver backup {'(DRY RUN)' if self.dry_run else ''}")
@@ -464,15 +455,17 @@ class FileServerBackup:
                                 self.logger.warning(f"Skipping missing source: '{name}' ({src_path})")
                                 continue
 
-                            self.logger.info(f"Zipping [{name}] from {src_path} ...")
-                            self._zip_directory_tree(src_path, zf, arc_prefix=name)
+                            arc_prefix = src_path.name
+                            self.logger.info(f"Zipping [{name}] from {src_path} as '{arc_prefix}' ...")
+                            self._zip_directory_tree(src_path, zf, arc_prefix=arc_prefix)
                 else:
                     for name, src_path in self.config.sources.items():
                         if not src_path.exists():
                             self.logger.warning(f"Skipping missing source: '{name}' ({src_path})")
                             continue
-                        self.logger.info(f"Zipping [{name}] from {src_path} ...")
-                        self._zip_directory_tree(src_path, None, arc_prefix=name)
+                        arc_prefix = src_path.name
+                        self.logger.info(f"Zipping [{name}] from {src_path} as '{arc_prefix}' ...")
+                        self._zip_directory_tree(src_path, None, arc_prefix=arc_prefix)
 
             else:
                 current_backup_dir = self.config.destination_root / timestamp
@@ -522,7 +515,6 @@ class FileServerBackup:
         finally:
             self._release_lock()
 
-    # clean up old backups keeping configured weekly and monthly sets
     def prune_old_backups(self) -> None:
         dest_root = self.config.destination_root
         if not dest_root.exists():
@@ -580,20 +572,17 @@ class FileServerBackup:
                         self.error_count += 1
                         self.logger.error(f"Failed to delete '{old_backup}': {e}")
         else:
-            self.logger.info(f"No old backups to clean up ({len(backup_items)} total).")
+                        self.logger.info(f"No old backups to clean up ({len(backup_items)} total).")
 
 
-# main function to import into server startup script
 def run_startup_backup(config_file: str = "paths.toml", force: bool = False, dry_run: bool = False) -> bool:
     backup_job = FileServerBackup(config_path=config_file, dry_run=dry_run, force=force)
     return backup_job.run_backup()
 
 
-# legacy alias
 run_weekly_backup = run_startup_backup
 
 
-# run directly from command line
 def main():
     parser = argparse.ArgumentParser(description="Fileserver backup utility")
     parser.add_argument("-c", "--config", default="paths.toml", help="Path to paths.toml config")
