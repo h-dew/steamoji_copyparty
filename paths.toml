@@ -54,7 +54,8 @@ ignore_patterns = [
     "~$*",
     ".DS_Store",
     "Thumbs.db",
-    "*.lock"
+    "*.lock",
+    "*.hist"
 ]
 
 # Stop backup job immediately on first copy error if true
