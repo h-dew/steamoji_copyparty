@@ -74,7 +74,8 @@ ignore_patterns = [
     "~$*",
     ".DS_Store",
     "Thumbs.db",
-    "*.lock"
+    "*.lock",
+    "*.hist"
 ]
 
 # Stop backup job immediately on first copy error if true
@@ -170,7 +171,7 @@ class BackupConfig:
         self.min_disk_space_gb = float(opts_sec.get("min_disk_space_gb", 150.0))
         self.zip_backup = bool(opts_sec.get("zip_backup", True))
         self.zip_compression = bool(opts_sec.get("zip_compression", True))
-        self.ignore_patterns = opts_sec.get("ignore_patterns", ["*.tmp", "~$*", ".DS_Store", "Thumbs.db"])
+        self.ignore_patterns = opts_sec.get("ignore_patterns", ["*.tmp", "~$*", ".DS_Store", "Thumbs.db", "*.hist"])
         self.strict_mode = bool(opts_sec.get("strict_mode", False))
 
     # create sample config if paths.toml missing
