@@ -1,5 +1,6 @@
 # user configuration is generated, so ignore
 users.conf
 __pycache__
+.DS_Store
 
 setup/steamoji_copyparty.service
