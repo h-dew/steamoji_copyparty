@@ -1,18 +1,56 @@
-# This configuration file holds the drive names and the folder names
+# Configuration file for drive and folder paths
 
 [drives]
-# 2 drives are expected, one for storage and one for backup
-# Ensure that the drives are named correctly, and are mounted on startup
-
+# Drives mounted under /mnt or /media
 storage = "storage"
 backup = "backup"
 
 [folders]
-# These three folders are to be placed at the root of the storage drive
-
+# Folders located inside the storage drive root
 apprenticeFolder = "apprentice_folders"
 projectFilesFolder = "project_files"
 miscFolder = "misc"
 
-# No setup needed for the backup drive
+[backup]
+# Subdirectory on backup drive where timestamped backups are stored
+backup_dir = "backups"
 
+# Directory or zip archive naming template
+folder_name_format = "backup_%Y-%m-%d_%H-%M-%S"
+
+# Number of weekly backups to keep
+keep_backups = 8
+
+# Number of monthly backups to keep (keeps first backup of each month)
+keep_monthly_months = 6
+
+# Minimum number of days between automated backups
+backup_interval_days = 7
+
+# Path to the log file
+log_file = "/var/log/fileserver_backup.log"
+
+# Lock file path to prevent overlapping runs
+lock_file = "/var/run/fileserver_backup.lock"
+
+[backup_options]
+# Minimum free storage required on destination drive (in GB)
+min_disk_space_gb = 150.0
+
+# Compress backups into single zip archives (.zip)
+zip_backup = true
+
+# Use DEFLATE compression (true = smaller file; false = uncompressed ZIP_STORED)
+zip_compression = true
+
+# File patterns to exclude from backup
+ignore_patterns = [
+    "*.tmp",
+    "~$*",
+    ".DS_Store",
+    "Thumbs.db",
+    "*.lock"
+]
+
+# Stop backup job immediately on first copy error if true
+strict_mode = false
